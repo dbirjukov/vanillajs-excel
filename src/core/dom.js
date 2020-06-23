@@ -56,8 +56,60 @@ class DOM {
     return this.$el.querySelectorAll(selector);
   }
 
+  query(selector) {
+    return $(this.$el.querySelector(selector));
+  }
+
   css(styles = {}) {
     Object.assign(this.$el.style, styles);
+  }
+
+  addClass(className) {
+    this.$el.classList.add(className);
+    return this;
+  }
+
+  removeClass(className) {
+    this.$el.classList.remove(className);
+    return this;
+  }
+
+  id(parse) {
+    if (parse) {
+      const parsed = this.id().split(':');
+      return {
+        row: +parsed[0],
+        col: +parsed[1],
+      };
+    }
+    return this.data.id;
+  }
+
+  get cellCoords() {
+    if (this.data.element !== 'cell') {
+      throw new Error("Can't get cell coordinates for a non-cell element");
+    }
+    return { row: this.data.row, col: this.data.col };
+  }
+
+  text(value) {
+    if (typeof value === 'string') {
+      if (this.$el.tagName.toLowerCase() === 'input') {
+        this.$el.value = value;
+      } else {
+        this.$el.textContent = value;
+      }
+      return this;
+    }
+    if (this.$el.tagName.toLowerCase() === 'input') {
+      return this.$el.value.trim();
+    } else {
+      return this.$el.textContent.trim();
+    }
+  }
+  focus() {
+    this.$el.focus();
+    return this;
   }
 }
 
