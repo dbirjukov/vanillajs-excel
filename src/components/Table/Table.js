@@ -4,6 +4,10 @@ import { resize } from './table.resize';
 import { shouldResize, isCell, matrix, nextCellId } from './table.functions';
 import { TableSelector } from './table.selector';
 import { $ } from '../../core/dom';
+import * as actions from '../../store/actions';
+import { defaultStyles } from '../../constants';
+import { CHANGE_STYLES } from '../../store/types';
+import { parse } from '../../core/parse';
 
 export class Table extends ExcelComponent {
   static className = 'excel__table';
@@ -15,7 +19,7 @@ export class Table extends ExcelComponent {
   }
 
   toHTML() {
-    return createTable();
+    return createTable(this.$state);
   }
 
   prepare() {
@@ -27,22 +31,42 @@ export class Table extends ExcelComponent {
     const $cell = this.$root.query('[data-id="0:0"]');
     this.selectCell($cell);
 
-    this.$on('formula:input', (text) => {
-      this.selection.current.text(text);
+    this.$on('formula:input', (value) => {
+      const $cell = this.selection.current;
+      $cell.attr('data-value', value).text(parse(value));
+      this.updateTextInStore(value);
     });
     this.$on('formula:enter', () => {
       this.selection.current.$el.focus();
+    });
+    this.$on('toolbar:styleSelect', (style) => {
+      this.selection.applyStyles(style);
+      const ids = this.selection.ids;
+      this.$dispatch(actions.applyStyles({ value: style, ids }));
     });
   }
 
   selectCell($cell) {
     this.selection.select($cell);
     this.$emit('table:select', $cell);
+    const cellStyles = this.selection.current.getStyles(
+      Object.keys(defaultStyles),
+    );
+    this.$dispatch({ type: CHANGE_STYLES, data: cellStyles });
+  }
+
+  async resizeTable(event) {
+    try {
+      const data = await resize(this.$root, event);
+      this.$dispatch(actions.resizeTable(data));
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   onMousedown(event) {
     if (shouldResize(event)) {
-      resize(this.$root, event);
+      this.resizeTable(event);
     } else if (isCell(event)) {
       const $target = $(event.target);
       if (event.shiftKey) {
@@ -51,7 +75,7 @@ export class Table extends ExcelComponent {
         );
         this.selection.selectGroup($cells);
       } else {
-        this.selection.select($target);
+        this.selectCell($target);
       }
     }
   }
@@ -74,7 +98,15 @@ export class Table extends ExcelComponent {
     }
   }
 
+  updateTextInStore(value) {
+    this.$dispatch(
+      actions.currentText({ id: this.selection.current.id(), value }),
+    );
+  }
+
   onInput(e) {
-    this.$emit('table:input', $(e.target).text());
+    const $target = $(e.target);
+    $target.attr('data-value', $target.text());
+    this.updateTextInStore($(e.target).text());
   }
 }

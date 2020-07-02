@@ -1,52 +1,47 @@
-import { ExcelComponent } from '../../core/ExcelComponent';
+import { createToolbar } from './toolbar.template';
+import { $ } from '../../core/dom';
+import ExcelStateComponent from '../../core/ExcelStateComponent';
+import { defaultStyles } from '../../constants';
 
-export class Toolbar extends ExcelComponent {
-  constructor($root) {
+export class Toolbar extends ExcelStateComponent {
+  constructor($root, options) {
     super($root, {
       name: 'Toolbar',
       listeners: ['click'],
+      ...options,
     });
+    this.subscribe = ['currentStyles'];
   }
   static className = 'excel__toolbar';
 
-  onClick() {
-    console.log('event listener works!');
+  prepare() {
+    this.initState(defaultStyles);
+  }
+
+  init() {
+    super.init();
+  }
+
+  stateChanged({ currentStyles }) {
+    if (currentStyles) {
+      this.setState(currentStyles);
+    }
+  }
+
+  onClick(e) {
+    const $target = $(e.target);
+    if ($target.data.type === 'button') {
+      const value = JSON.parse($target.data.value);
+      this.setState(value);
+      this.$emit('toolbar:styleSelect', value);
+    }
+  }
+
+  get template() {
+    return createToolbar(this.state);
   }
 
   toHTML() {
-    return `
-          <div class="button">
-            <span class="material-icons">
-              format_align_left
-            </span>
-          </div>
-
-          <div class="button">
-            <span class="material-icons">
-              format_align_center
-            </span>
-          </div>
-
-          <div class="button">
-            <span class="material-icons">
-              format_align_right
-            </span>
-          </div>
-          <div class="button">
-            <span class="material-icons">
-              format_bold
-            </span>
-          </div>
-          <div class="button">
-            <span class="material-icons">
-              format_italic
-            </span>
-          </div>
-          <div class="button">
-            <span class="material-icons">
-              format_underline
-            </span>
-          </div>
-        `;
+    return this.template;
   }
 }
