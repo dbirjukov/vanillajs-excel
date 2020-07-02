@@ -64,6 +64,21 @@ class DOM {
     Object.assign(this.$el.style, styles);
   }
 
+  attr(name, value) {
+    if (typeof value === 'string') {
+      this.$el.setAttribute(name, value);
+      return this;
+    }
+    return this.$el.getAttribute(name);
+  }
+
+  getStyles(styles) {
+    return styles.reduce((result, style) => {
+      result[style] = this.$el.style[style];
+      return result;
+    }, {});
+  }
+
   addClass(className) {
     this.$el.classList.add(className);
     return this;
@@ -93,7 +108,7 @@ class DOM {
   }
 
   text(value) {
-    if (typeof value === 'string') {
+    if (typeof value !== 'undefined') {
       if (this.$el.tagName.toLowerCase() === 'input') {
         this.$el.value = value;
       } else {

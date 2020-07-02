@@ -23,6 +23,16 @@ export class TableSelector {
     this.group.forEach(($el) => $el.removeClass(TableSelector.className));
     this.group = [];
   }
+
+  get ids() {
+    return this.group.map(($el) => $el.data.id);
+  }
+
+  applyStyles(style) {
+    this.group.forEach(($cell) => {
+      $cell.css(style);
+    });
+  }
 }
 
 // function coordsEqual($cell1, $cell2) {

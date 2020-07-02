@@ -14,3 +14,28 @@ export function range(start, end) {
     .map((_, index) => start + index);
   return result;
 }
+
+export function storage(key, value = null) {
+  if (!value) {
+    return JSON.parse(localStorage.getItem(key));
+  }
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+export function stylesToInline(styles) {
+  return Object.keys(styles)
+    .map((key) => `${camelToDashCase(key)}: ${styles[key]}`)
+    .join('; ');
+}
+
+export function camelToDashCase(string) {
+  return string.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
+}
+
+export function debounce(fn, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), wait);
+  };
+}
