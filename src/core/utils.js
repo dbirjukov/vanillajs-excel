@@ -39,3 +39,7 @@ export function debounce(fn, wait) {
     timeout = setTimeout(() => fn(...args), wait);
   };
 }
+
+export function preventDefault(event) {
+  event.preventDefault();
+}
