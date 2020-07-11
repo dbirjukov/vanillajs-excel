@@ -6,13 +6,13 @@ export function createHeader(state) {
             state.tableTitle || defaultTitle
           }" />
           <div>
-            <div class="button">
-              <span class="material-icons">
+            <div class="button" data-action="delete">
+              <span class="material-icons" data-action="delete">
                 delete
               </span>
             </div>
-            <div class="button">
-              <i class="material-icons">exit_to_app</i>
+            <div class="button" data-action="exit">
+              <i class="material-icons" data-action="exit">exit_to_app</i>
             </div>
           </div>
         `;

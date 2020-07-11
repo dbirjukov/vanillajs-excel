@@ -19,6 +19,9 @@ export default class StoreSubscriber {
         }
       });
       this.prevState = state;
+      if (process.env.NODE_ENV === 'development') {
+        window.redux = this.prevState;
+      }
     });
   }
 

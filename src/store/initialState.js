@@ -1,4 +1,3 @@
-import { storage } from '../core/utils';
 import { defaultStyles, defaultTitle } from '../constants';
 
 const defaultState = {
@@ -9,6 +8,7 @@ const defaultState = {
   currentStyles: defaultStyles,
   cellStyles: {},
   tableTitle: defaultTitle,
+  lastDate: new Date(),
 };
 
-export const initialState = storage('excel-state') || defaultState;
+export const initialState = (state) => (state ? state : defaultState);
