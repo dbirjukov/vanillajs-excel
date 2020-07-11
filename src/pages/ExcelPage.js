@@ -4,7 +4,7 @@ import { Header } from '../components/Header/Header';
 import { Toolbar } from '../components/Toolbar/Toolbar';
 import { Formula } from '../components/Formula/Formula';
 import { Table } from '../components/Table/Table';
-import { createStore } from '../core/createStore';
+import { createStore } from '../core/store/createStore';
 import { rootReducer } from '../store/rootReducer';
 import { storage, debounce } from '../core/utils';
 import { initialState } from '../store/initialState';

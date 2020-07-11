@@ -42,7 +42,7 @@ export class Excel {
   destroy() {
     this.subscriber.subscribeToStore();
     this.components.forEach((comp) => comp.destroy());
-    if (this.process.NODE_ENV === 'production') {
+    if (process.NODE_ENV === 'production') {
       document.removeEventListener('contextmenu', preventDefault);
     }
   }
